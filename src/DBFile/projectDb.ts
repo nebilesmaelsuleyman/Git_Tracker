@@ -8,6 +8,9 @@ export class projectDb {
 	private readonly project_File: string
 	constructor(filepath: string) {
 		this.project_File = path.join(filepath, 'projects.json')
+		// sure the data folder exists
+		fs.mkdirSync(filepath, { recursive: true })
+		console.log('file path from db', this.project_File)
 		if (!fs.existsSync(this.project_File)) {
 			fs.writeFileSync(this.project_File, '[]')
 		}

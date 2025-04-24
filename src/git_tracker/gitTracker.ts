@@ -8,11 +8,13 @@ export default class GitTracker {
 	private projectDb: projectDb
 	private activeProjects: Map<string, Tproject>
 
-	constructor(filepath: string = '../data') {
+	constructor() {
+		const filepath = path.resolve(__dirname, '../data')
 		this.projectDb = new projectDb(filepath)
 		this.activeProjects = new Map()
 		this.loadProjects
 	}
+	// read all projects file and store it in-memory for fast accessing
 	private loadProjects(): void {
 		this.projectDb.readProjects()?.forEach((project) => {
 			this.activeProjects.set(project.id, project)
@@ -21,8 +23,9 @@ export default class GitTracker {
 
 	private isValidGitRepo(repoPath: string): boolean {
 		try {
-			const gitpath = path.join(repoPath, '.git')
-			return fs.existsSync(gitpath) && fs.statSync(gitpath).isDirectory()
+			const gitFolder = path.join(repoPath, '.git')
+			console.log('this is the repopath to be validated', gitFolder)
+			return fs.existsSync(gitFolder) && fs.statSync(gitFolder).isDirectory()
 		} catch (error) {
 			return false
 		}
@@ -30,8 +33,13 @@ export default class GitTracker {
 
 	registerProject(name: string, repoPath: string): boolean {
 		try {
-			const nomrmalizedPath = path.normalize(repoPath)
-			if (!this.isValidGitRepo(nomrmalizedPath)) {
+			// auto-correct if someone forgets the backslash after derive letter(c:)
+			if (/^([a-zA-Z]):[^\\/]/.test(repoPath)) {
+				repoPath = repoPath.replace(/^([a-zA-Z]):/, '$1:/')
+			}
+
+			const absolutePath = path.resolve(repoPath)
+			if (!this.isValidGitRepo(absolutePath)) {
 				console.error(`invalid Git repository at path :${repoPath}`)
 				return false
 			}
@@ -44,7 +52,6 @@ export default class GitTracker {
 			}
 			this.projectDb.saveProjects(project)
 			this.activeProjects.set(project.id, project)
-
 			return true
 		} catch (error) {
 			console.error(
