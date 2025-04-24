@@ -61,4 +61,18 @@ export default class GitTracker {
 			return false
 		}
 	}
+
+	deleteProject(id: string) {
+		const projects = this.projectDb.readProjects()
+
+		const newproject = projects?.filter((project) => {
+			console.log(project.id)
+			return project.id !== id
+		})
+		console.log(newproject)
+		this.projectDb.writeProject(newproject)
+
+		this.activeProjects.delete(id)
+		console.log(`project with Id${id} has been deleted`)
+	}
 }

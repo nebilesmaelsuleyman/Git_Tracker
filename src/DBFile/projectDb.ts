@@ -31,13 +31,13 @@ export class projectDb {
 		return this.lastid.toString()
 	}
 
-	readProjects(): Tproject[] | undefined {
+	readProjects(): Tproject[] {
 		try {
 			const data = fs.readFileSync(this.project_File, 'utf-8')
 			return JSON.parse(data) as Tproject[]
 		} catch (error) {
 			console.error('Error reading projects file:', error)
-			return undefined
+			return []
 		}
 	}
 	writeProject(projects: Tproject[]): void {
