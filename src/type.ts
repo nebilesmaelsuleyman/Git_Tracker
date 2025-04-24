@@ -16,3 +16,14 @@ export interface TGitData {
 	deletions: number
 	timestamp: string
 }
+
+export interface TGitHistoryEntry {
+	timestamp: string
+	branch: string
+	commitHash: string
+	commitMessage: string
+	isDirty: boolean
+	changedFiles: number
+	insertions: number
+	deletions: number
+}
