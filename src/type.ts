@@ -1,10 +1,11 @@
-export interface project {
+export interface Tproject {
 	id: string
 	name: string
 	path: string
+	craetedAt: string
 }
 
-export interface GitData {
+export interface TGitData {
 	projectId: string
 	branch: string
 	commit: string
