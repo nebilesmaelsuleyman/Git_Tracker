@@ -5,22 +5,27 @@ export class GitRepositoryMonitor {
 	private gitService: GitServices
 	private historyStorag: GitHistoryStorage
 	private pollingInterval?: NodeJS.Timeout
+	private isPolling = false
 
-	constructor(repopath: string, private pollingIntervalMs: number = 500) {
+	constructor(repopath: string, private pollingIntervalMs: number = 100000) {
 		this.gitService = new GitServices(repopath)
 		this.historyStorag = new GitHistoryStorage()
 	}
+
 	private async captureSnapshot(): Promise<void> {
 		try {
-			const [branch, commit, isDirty, changes] = await Promise.all([
-				this.gitService.getCurrentBranch(),
-				this.gitService.getLatestCommit(),
-				this.gitService.isDirty(),
-				this.gitService.getChangeStats(),
-			])
+			const [branch, commit, isDirty, changes, projectName] = await Promise.all(
+				[
+					this.gitService.getCurrentBranch(),
+					this.gitService.getLatestCommit(),
+					this.gitService.isDirty(),
+					this.gitService.getChangeStats(),
+					this.gitService.getProjectName(),
+				]
+			)
 
 			const entry = {
-				timestamp: new Date().toISOString(),
+				projectName,
 				branch,
 				commitHash: commit.hash,
 				commitMessage: commit.message,
@@ -28,25 +33,55 @@ export class GitRepositoryMonitor {
 				changedFiles: changes.changed,
 				insertions: changes.insertions,
 				deletions: changes.deletions,
+				timestamp: new Date().toISOString(),
 			}
-			await this.historyStorag.saveHistorydata(entry)
 			console.log(`Snaphot captured at ${entry.timestamp}`)
+			await this.historyStorag.saveHistorydata(entry)
 		} catch (error) {
 			console.error('error capturing snapshot:', error)
 		}
 	}
 
-	startPolling(): void {
-		this.pollingInterval = setInterval(
-			() => this.captureSnapshot(),
-			this.pollingIntervalMs
-		)
-		console.log(`started polling repository `)
-	}
-	stopPolling(): void {
-		if (this.pollingInterval) {
-			clearInterval(this.pollingInterval)
-			console.log('stopped polling')
+	// startPolling(): void {
+	// 	if (this.isPolling) {
+	// 		console.warn('polling already in progress')
+	// 		return
+	// 	}
+	// 	this.isPolling = true
+	// 	this.pollingInterval = setTimeout(async () => {
+	// 		try {
+	// 			await this.captureSnapshot()
+	// 		} catch (error) {
+	// 			console.error('Failded to capture snapshot:', error)
+	// 		}
+	// 	}, this.pollingIntervalMs)
+	// 	console.log('started polling repository')
+	// }
+
+	async startPolling(): Promise<void> {
+		if (this.isPolling) {
+			console.log('polling is already active.')
+			return
 		}
+
+		this.isPolling = true
+		console.log('started polling repository ...')
+
+		const poll = async () => {
+			if (!this.isPolling) return
+
+			try {
+				await this.captureSnapshot()
+			} catch (error) {
+				console.error('Error during snapshot capture', error)
+			}
+			setTimeout(poll, this.pollingIntervalMs)
+		}
+		poll()
+	}
+
+	stopPolling(): void {
+		this.isPolling = false
+		console.log('stopped polling repository')
 	}
 }

@@ -3,7 +3,7 @@ import * as path from 'path'
 import fs from 'fs'
 export class GitHistoryStorage {
 	private readonly filepath: string
-	constructor(storagepath: string = path.resolve(__dirname, './data')) {
+	constructor(storagepath: string = path.resolve(__dirname, '../data')) {
 		this.filepath = path.join(storagepath, 'git_history.json')
 		console.log('filepath of githistory', this.filepath)
 		this.initializeStorage()
@@ -17,18 +17,30 @@ export class GitHistoryStorage {
 	}
 
 	async saveHistorydata(entry: TGitHistoryEntry) {
-		const history = await this.readAll()
+		const history = await this.Fetch()
 		history?.push(entry)
 		fs.writeFileSync(this.filepath, JSON.stringify(history, null, 2))
 	}
 
-	async readAll(): Promise<TGitHistoryEntry[]> {
+	async Fetch(): Promise<TGitHistoryEntry[]> {
 		try {
-			const data = fs.readFileSync(this.filepath)
+			const data = fs.readFileSync(this.filepath, 'utf-8')
+			if (!data.trim()) {
+				return []
+			}
 			return JSON.parse(data.toString())
 		} catch (err) {
 			console.error('Error reading history', err)
 			return []
 		}
+	}
+	async deleteGitData(pathname: string) {
+		try {
+			const data = fs.readFileSync(this.filepath)
+			const updatedData = data.filter((item: any) => {
+				item.pathname !== pathname
+			})
+			fs.writeFileSync(this.filepath, JSON.stringify(updatedData, null, 2))
+		} catch (err) {}
 	}
 }
