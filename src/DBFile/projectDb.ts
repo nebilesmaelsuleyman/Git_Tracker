@@ -41,6 +41,7 @@ export class projectDb {
 			return []
 		}
 	}
+
 	writeProject(projects: Tproject[]): void {
 		try {
 			fs.writeFileSync(this.project_File, JSON.stringify(projects, null, 2))

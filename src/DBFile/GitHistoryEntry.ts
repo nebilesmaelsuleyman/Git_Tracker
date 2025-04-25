@@ -11,7 +11,7 @@ export class GitHistoryStorage {
 
 	private initializeStorage(): void {
 		if (!fs.existsSync(this.filepath)) {
-			fs.mkdirSync(path.dirname(this.filepath), { recursive: true })
+			fs.mkdirSync(path.dirname(this.filepath))
 			fs.writeFileSync(this.filepath, '{}', 'utf-8')
 		}
 	}
@@ -32,7 +32,7 @@ export class GitHistoryStorage {
 	async Fetch(): Promise<{ [key: string]: TGitHistoryEntry[] }> {
 		try {
 			const data = fs.readFileSync(this.filepath, 'utf-8')
-			if (!data.trim()) {
+			if (!data) {
 				return {}
 			}
 			return JSON.parse(data.toString()) as {
@@ -43,6 +43,7 @@ export class GitHistoryStorage {
 			return {}
 		}
 	}
+
 	async deleteGitData(pathname: string) {
 		try {
 			const data = fs.readFileSync(this.filepath)

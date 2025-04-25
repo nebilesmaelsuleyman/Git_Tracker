@@ -6,13 +6,14 @@ import { Tproject } from '../type'
 
 export default class GitTracker {
 	private projectDb: projectDb
+	private filepath: string
 	private activeProjects: Map<string, Tproject>
 
-	constructor() {
-		const filepath = path.resolve(__dirname, '../data')
+	constructor(filepath: string = path.resolve(__dirname, '../data')) {
+		this.filepath = filepath
 		this.projectDb = new projectDb(filepath)
 		this.activeProjects = new Map()
-		this.loadProjects
+		this.loadProjects()
 	}
 	// read all projects file and store it in-memory for fast accessing
 	private loadProjects(): void {
@@ -20,7 +21,10 @@ export default class GitTracker {
 			this.activeProjects.set(project.id, project)
 		})
 	}
-
+	public readprojects() {
+		const result = this.projectDb.readProjects()
+		console.log(result)
+	}
 	private isValidGitRepo(repoPath: string): boolean {
 		try {
 			const gitFolder = path.join(repoPath, '.git')

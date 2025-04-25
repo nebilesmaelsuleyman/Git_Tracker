@@ -32,7 +32,7 @@ export class GitServices {
 	async getCurrentBranch(): Promise<string> {
 		try {
 			const branch = await this.runGit('git rev-parse --abbrev-ref HEAD')
-			return branch?.trimEnd() || 'unknown'
+			return branch?.trim() || 'unknown'
 		} catch (error) {
 			console.error('error in accessing branch of the this gitrepo', error)
 			return 'failed accesing the branch'

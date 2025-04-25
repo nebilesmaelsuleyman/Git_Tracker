@@ -2,15 +2,27 @@ import GitTracker from './git_tracker/TrackProject'
 import { GitRepositoryMonitor } from './git_tracker/GitMonitor'
 import { GitHistoryStorage } from './DBFile/GitHistoryEntry'
 import { PollingManager } from './git_tracker/pollingManager'
+import { projectDb } from './DBFile/projectDb'
 
 // inistantiating Tracker
 const tracker = new GitTracker()
+const projectDatabase = new projectDb(
+	'C:/Users/Administrator/Desktop/Golden-Team/DBFile'
+)
 
 function registerProject(projectName: string, path: string) {
 	const RegisterRepofiles = tracker.registerProject(projectName, path)
 
 	console.log(RegisterRepofiles ? 'success' : 'failed')
 }
+registerProject(
+	'pythonScript_writer',
+	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer'
+)
+
+// read all project from db
+
+const readprojects = tracker.readprojects()
 
 function deleteProject(id: string) {
 	if (!id) {
@@ -43,17 +55,17 @@ function DeleteGithistory(projectname: string) {
 // 	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
 // 	100000
 // )
-PollingManager.start(
-	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer',
-	1000
-)
+// PollingManager.start(
+// 	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer',
+// 	1000
+// )
 //stop polling one repo
 // PollingManager.stop('C:/Users/Administrator/Desktop/Golden-Team/childProcess')
 
 //stop all repo palling
 // console.log('stopped all polling')
-PollingManager.stopAll()
+// PollingManager.stopAll()
 
 //deleting githistory data
-DeleteGithistory('childProcess')
-console.log(`git history of childproces deleted`)
+// DeleteGithistory('childProcess')
+// console.log(`git history of childproces deleted`)
