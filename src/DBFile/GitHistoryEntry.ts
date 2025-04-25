@@ -23,6 +23,7 @@ export class GitHistoryStorage {
 		if (!allHistories[repoPath]) {
 			allHistories[repoPath] = []
 		}
+
 		allHistories[repoPath].push(entry)
 
 		fs.writeFileSync(this.filepath, JSON.stringify(allHistories, null, 2))

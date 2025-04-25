@@ -37,15 +37,23 @@ function DeleteGithistory(projectname: string) {
 }
 
 // fetchGitData()
-// DeleteGithistory()
 
 //startPolling
+// PollingManager.start(
+// 	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
+// 	100000
+// )
 PollingManager.start(
-	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
+	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer',
 	1000
 )
-//stop polling
-PollingManager.stop('C:/Users/Administrator/Desktop/Golden-Team/childProcess')
+//stop polling one repo
+// PollingManager.stop('C:/Users/Administrator/Desktop/Golden-Team/childProcess')
 
 //stop all repo palling
-// PollingManager.stopAll()
+// console.log('stopped all polling')
+PollingManager.stopAll()
+
+//deleting githistory data
+DeleteGithistory('childProcess')
+console.log(`git history of childproces deleted`)

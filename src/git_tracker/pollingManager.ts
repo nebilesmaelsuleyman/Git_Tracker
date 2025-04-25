@@ -26,7 +26,7 @@ export class PollingManager {
 	static stopAll() {
 		this.monitors.forEach((monitor, path) => {
 			monitor.stopPolling()
-			this.monitors.delete(path)
+			// this.monitors.delete(path)
 		})
 	}
 }
