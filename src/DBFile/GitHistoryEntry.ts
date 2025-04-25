@@ -12,26 +12,34 @@ export class GitHistoryStorage {
 	private initializeStorage(): void {
 		if (!fs.existsSync(this.filepath)) {
 			fs.mkdirSync(path.dirname(this.filepath), { recursive: true })
-			fs.writeFileSync(this.filepath, '[]', 'utf-8')
+			fs.writeFileSync(this.filepath, '{}', 'utf-8')
 		}
 	}
 
-	async saveHistorydata(entry: TGitHistoryEntry) {
-		const history = await this.Fetch()
-		history?.push(entry)
-		fs.writeFileSync(this.filepath, JSON.stringify(history, null, 2))
+	async saveHistorydata(repoPath: string, entry: TGitHistoryEntry) {
+		const allHistories: { [key: string]: TGitHistoryEntry[] } =
+			await this.Fetch()
+
+		if (!allHistories[repoPath]) {
+			allHistories[repoPath] = []
+		}
+		allHistories[repoPath].push(entry)
+
+		fs.writeFileSync(this.filepath, JSON.stringify(allHistories, null, 2))
 	}
 
-	async Fetch(): Promise<TGitHistoryEntry[]> {
+	async Fetch(): Promise<{ [key: string]: TGitHistoryEntry[] }> {
 		try {
 			const data = fs.readFileSync(this.filepath, 'utf-8')
 			if (!data.trim()) {
-				return []
+				return {}
 			}
-			return JSON.parse(data.toString())
+			return JSON.parse(data.toString()) as {
+				[key: string]: TGitHistoryEntry[]
+			}
 		} catch (err) {
 			console.error('Error reading history', err)
-			return []
+			return {}
 		}
 	}
 	async deleteGitData(pathname: string) {

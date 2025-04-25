@@ -1,6 +1,7 @@
 import GitTracker from './git_tracker/TrackProject'
 import { GitRepositoryMonitor } from './git_tracker/GitMonitor'
 import { GitHistoryStorage } from './DBFile/GitHistoryEntry'
+import { PollingManager } from './git_tracker/pollingManager'
 
 // inistantiating Tracker
 const tracker = new GitTracker()
@@ -29,37 +30,22 @@ async function fetchGitData() {
 	await data.Fetch().then((data) => console.log('githistory data', data))
 }
 
-function MonitorandPoll(path: string, time?: number) {
-	const monitor = new GitRepositoryMonitor(path, time)
-	monitor.startPolling()
-}
-function stopPolling(path: string) {
-	const monitor = new GitRepositoryMonitor(path)
-	monitor.stopPolling()
-}
-
 function DeleteGithistory(projectname: string) {
 	const updatedData = new GitHistoryStorage()
 	updatedData.deleteGitData(projectname)
 	console.log(`githistory of project${projectname}is deleted succesfully`)
 }
 
-fetchGitData()
+// fetchGitData()
 // DeleteGithistory()
-MonitorandPoll('C:/Users/Administrator/Desktop/Golden-Team/childProcess', 1000)
 
-// start Monitoring
-// const monitor = new GitRepositoryMonitor(
-// 	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
-// 	500
-// )
+//startPolling
+PollingManager.start(
+	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
+	1000
+)
+//stop polling
+PollingManager.stop('C:/Users/Administrator/Desktop/Golden-Team/childProcess')
 
-// monitor.startPolling()
-// console.log('Tracking')
-
-// console.log('stop capturing')
-// registerProject(
-// 	'child_process',
-// 	'C:/Users/Administrator/Desktop/Golden-Team/Git_Tracker'
-// )
-// deleteProject('3')
+//stop all repo palling
+// PollingManager.stopAll()

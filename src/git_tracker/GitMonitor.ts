@@ -6,8 +6,10 @@ export class GitRepositoryMonitor {
 	private historyStorag: GitHistoryStorage
 	private pollingInterval?: NodeJS.Timeout
 	private isPolling = false
+	private repopath: string
 
 	constructor(repopath: string, private pollingIntervalMs: number = 100000) {
+		this.repopath = repopath
 		this.gitService = new GitServices(repopath)
 		this.historyStorag = new GitHistoryStorage()
 	}
@@ -36,7 +38,7 @@ export class GitRepositoryMonitor {
 				timestamp: new Date().toISOString(),
 			}
 			console.log(`Snaphot captured at ${entry.timestamp}`)
-			await this.historyStorag.saveHistorydata(entry)
+			await this.historyStorag.saveHistorydata(this.repopath, entry)
 		} catch (error) {
 			console.error('error capturing snapshot:', error)
 		}
