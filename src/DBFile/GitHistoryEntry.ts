@@ -11,7 +11,7 @@ export class GitHistoryStorage {
 
 	private initializeStorage(): void {
 		if (!fs.existsSync(this.filepath)) {
-			fs.mkdirSync(path.dirname(this.filepath), { recursive: true })
+			fs.mkdirSync(path.dirname(this.filepath))
 			fs.writeFileSync(this.filepath, '{}', 'utf-8')
 		}
 	}

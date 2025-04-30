@@ -8,17 +8,38 @@ const fs_1 = __importDefault(require("fs"));
 const node_path_1 = __importDefault(require("node:path"));
 class projectDb {
     constructor(filepath) {
+<<<<<<< HEAD
         this.project_File = node_path_1.default.join(filepath, 'projects.json');
         // sure the data folder exists
         console.log('file path from db', this.project_File);
         if (!fs_1.default.existsSync(this.project_File)) {
             fs_1.default.mkdirSync(filepath, { recursive: true });
+=======
+        this.lastid = 0;
+        this.project_File = node_path_1.default.join(filepath, 'projects.json');
+        // sure the data folder exists
+        fs_1.default.mkdirSync(filepath, { recursive: true });
+        console.log('file path from db', this.project_File);
+        if (!fs_1.default.existsSync(this.project_File)) {
+>>>>>>> 306fb1ec3e692824bae0b4a73d8b765556800c47
             fs_1.default.writeFileSync(this.project_File, '[]');
         }
         this.initializedLastId();
     }
     initializedLastId() {
         const projects = this.readProjects();
+<<<<<<< HEAD
+=======
+        this.lastid =
+            projects?.reduce((maxId, project) => {
+                const currentId = parseInt(project.id, 10);
+                return currentId > maxId ? currentId : maxId;
+            }, 0) || 0;
+    }
+    getNextId() {
+        this.lastid++;
+        return this.lastid.toString();
+>>>>>>> 306fb1ec3e692824bae0b4a73d8b765556800c47
     }
     readProjects() {
         try {

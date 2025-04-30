@@ -47,7 +47,11 @@ class GitHistoryStorage {
     }
     initializeStorage() {
         if (!fs_1.default.existsSync(this.filepath)) {
+<<<<<<< HEAD
             fs_1.default.mkdirSync(path.dirname(this.filepath), { recursive: true });
+=======
+            fs_1.default.mkdirSync(path.dirname(this.filepath));
+>>>>>>> 306fb1ec3e692824bae0b4a73d8b765556800c47
             fs_1.default.writeFileSync(this.filepath, '{}', 'utf-8');
         }
     }
@@ -56,6 +60,7 @@ class GitHistoryStorage {
         if (!allHistories[repoPath]) {
             allHistories[repoPath] = [];
         }
+<<<<<<< HEAD
         const historykey = allHistories[repoPath];
         const lastEntry = historykey[historykey.length - 1];
         const clean = (data) => {
@@ -70,6 +75,9 @@ class GitHistoryStorage {
         else {
             lastEntry.timestamp = entry.timestamp;
         }
+=======
+        allHistories[repoPath].push(entry);
+>>>>>>> 306fb1ec3e692824bae0b4a73d8b765556800c47
         fs_1.default.writeFileSync(this.filepath, JSON.stringify(allHistories, null, 2));
     }
     async Fetch() {
@@ -78,7 +86,11 @@ class GitHistoryStorage {
             if (!data) {
                 return {};
             }
+<<<<<<< HEAD
             return JSON.parse(data);
+=======
+            return JSON.parse(data.toString());
+>>>>>>> 306fb1ec3e692824bae0b4a73d8b765556800c47
         }
         catch (err) {
             console.error('Error reading history', err);
