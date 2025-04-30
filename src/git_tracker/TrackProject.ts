@@ -3,16 +3,18 @@ import path from 'path'
 
 import { projectDb } from '../DBFile/projectDb'
 import { Tproject } from '../type'
+import { v4 as uuid4 } from 'uuid'
 
 export default class GitTracker {
 	private projectDb: projectDb
+	private filepath: string
 	private activeProjects: Map<string, Tproject>
 
-	constructor() {
-		const filepath = path.resolve(__dirname, '../data')
+	constructor(filepath: string = path.resolve(__dirname, '../data')) {
+		this.filepath = filepath
 		this.projectDb = new projectDb(filepath)
 		this.activeProjects = new Map()
-		this.loadProjects
+		this.loadProjects()
 	}
 	// read all projects file and store it in-memory for fast accessing
 	private loadProjects(): void {
@@ -20,7 +22,10 @@ export default class GitTracker {
 			this.activeProjects.set(project.id, project)
 		})
 	}
-
+	public readprojects() {
+		const result = this.projectDb.readProjects()
+		console.log(result)
+	}
 	private isValidGitRepo(repoPath: string): boolean {
 		try {
 			const gitFolder = path.join(repoPath, '.git')
@@ -34,9 +39,6 @@ export default class GitTracker {
 	registerProject(name: string, repoPath: string): boolean {
 		try {
 			// auto-correct if someone forgets the backslash after derive letter(c:)
-			if (/^([a-zA-Z]):[^\\/]/.test(repoPath)) {
-				repoPath = repoPath.replace(/^([a-zA-Z]):/, '$1:/')
-			}
 
 			const absolutePath = path.resolve(repoPath)
 			if (!this.isValidGitRepo(absolutePath)) {
@@ -45,7 +47,7 @@ export default class GitTracker {
 			}
 
 			const project: Tproject = {
-				id: this.projectDb.getNextId(),
+				id: uuid4(),
 				name,
 				path: repoPath,
 				craetedAt: new Date().toISOString(),
@@ -62,17 +64,17 @@ export default class GitTracker {
 		}
 	}
 
-	deleteProject(id: string) {
+	deleteProject(name: string) {
 		const projects = this.projectDb.readProjects()
 
 		const newproject = projects?.filter((project) => {
 			console.log(project.id)
-			return project.id !== id
+			return project.name !== name
 		})
 		console.log(newproject)
 		this.projectDb.writeProject(newproject)
 
-		this.activeProjects.delete(id)
-		console.log(`project with Id${id} has been deleted`)
+		this.activeProjects.delete(name)
+		console.log(`project with Id${name} has been deleted`)
 	}
 }

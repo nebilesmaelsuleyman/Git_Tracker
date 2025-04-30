@@ -23,8 +23,23 @@ export class GitHistoryStorage {
 		if (!allHistories[repoPath]) {
 			allHistories[repoPath] = []
 		}
+		const historykey = allHistories[repoPath]
+		const lastEntry = historykey[historykey.length - 1]
 
-		allHistories[repoPath].push(entry)
+		const clean = (data: TGitHistoryEntry) => {
+			const { timestamp, ...rest } = data
+			return rest
+		}
+
+		const isDifferent =
+			!lastEntry ||
+			JSON.stringify(clean(entry)) !== JSON.stringify(clean(lastEntry))
+
+		if (isDifferent) {
+			historykey.push(entry)
+		} else {
+			lastEntry.timestamp = entry.timestamp
+		}
 
 		fs.writeFileSync(this.filepath, JSON.stringify(allHistories, null, 2))
 	}
@@ -32,10 +47,10 @@ export class GitHistoryStorage {
 	async Fetch(): Promise<{ [key: string]: TGitHistoryEntry[] }> {
 		try {
 			const data = fs.readFileSync(this.filepath, 'utf-8')
-			if (!data.trim()) {
+			if (!data) {
 				return {}
 			}
-			return JSON.parse(data.toString()) as {
+			return JSON.parse(data) as {
 				[key: string]: TGitHistoryEntry[]
 			}
 		} catch (err) {
@@ -43,6 +58,7 @@ export class GitHistoryStorage {
 			return {}
 		}
 	}
+
 	async deleteGitData(pathname: string) {
 		try {
 			const data = fs.readFileSync(this.filepath)

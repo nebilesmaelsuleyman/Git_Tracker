@@ -12,19 +12,30 @@ function registerProject(projectName: string, path: string) {
 	console.log(RegisterRepofiles ? 'success' : 'failed')
 }
 
-function deleteProject(id: string) {
-	if (!id) {
+registerProject(
+	'Advanced_nodejs',
+	'C:/Users/Administrator/Desktop/advanced nodejs/section-4'
+)
+
+// read all project from db
+
+// const readprojects = tracker.readprojects()
+
+function deleteProject(name: string) {
+	if (!name) {
 		console.error('no id provided')
 		return false
 	}
-	const deleteproject = tracker.deleteProject(id)
+	const deleteproject = tracker.deleteProject(name)
 	if (!deleteProject) {
 		console.log(`no data deleted`)
 	} else {
-		console.log(`project with id:${id} is deleted succesfully`)
+		console.log(`project with project name:${name} is deleted succesfully`)
 	}
 }
 
+//delete project by project name
+//deleteProject('')
 async function fetchGitData() {
 	const data = new GitHistoryStorage()
 	await data.Fetch().then((data) => console.log('githistory data', data))
@@ -36,24 +47,19 @@ function DeleteGithistory(projectname: string) {
 	console.log(`githistory of project${projectname}is deleted succesfully`)
 }
 
-// fetchGitData()
+fetchGitData()
 
-//startPolling
-// PollingManager.start(
-// 	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
-// 	100000
-// )
-PollingManager.start(
-	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer',
-	1000
-)
+// startPolling
+// PollingManager.start('./childProcess', 100000)
+PollingManager.start('C:/Users/Administrator/Desktop/advanced nodejs/section-4')
+
 //stop polling one repo
-// PollingManager.stop('C:/Users/Administrator/Desktop/Golden-Team/childProcess')
+// PollingManager.stop('./childProcess')
 
 //stop all repo palling
 // console.log('stopped all polling')
-PollingManager.stopAll()
+// PollingManager.stopAll()
 
 //deleting githistory data
-DeleteGithistory('childProcess')
-console.log(`git history of childproces deleted`)
+// DeleteGithistory('childProcess')
+// console.log(`git history of childproces deleted`)

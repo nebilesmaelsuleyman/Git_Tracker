@@ -1,8 +1,10 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
+import { Command } from 'commander'
 
 const execAsync = promisify(exec)
+const program = new Command()
 
 export class GitServices {
 	private repoPath: string
@@ -12,27 +14,24 @@ export class GitServices {
 
 	private async runGit(command: string): Promise<string> {
 		try {
-			// cwd:tells Node where to run the command from
-			//path.resolve ensure the path is absolute,avoiding issues with relative paths
-			const { stdout } = await execAsync(command, {
-				cwd: path.resolve(this.repoPath),
-				windowsHide: true,
-			})
-			return stdout.trim()
+			const { stdout, stderr } = await execAsync(command, {
+				cwd: this.repoPath,
+				shell: true,
+			} as any)
+
+			if (stderr) console.error('git error', stderr)
+
+			return stdout.toString().trim()
 		} catch (error) {
-			console.error(`Git command failed:${command}`, error)
+			console.error('Error executing git command:', error)
 			return ''
 		}
-
-		// return await execAsync(command, { cwd: path.resolve(this.repoPath) }).then(
-		// 	(res) => res.stdout.trim()
-		// )
 	}
 
 	async getCurrentBranch(): Promise<string> {
 		try {
 			const branch = await this.runGit('git rev-parse --abbrev-ref HEAD')
-			return branch?.trimEnd() || 'unknown'
+			return branch?.trim() || 'unknown'
 		} catch (error) {
 			console.error('error in accessing branch of the this gitrepo', error)
 			return 'failed accesing the branch'

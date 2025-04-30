@@ -2,17 +2,16 @@ import fs from 'fs'
 import path from 'node:path'
 
 import { Tproject } from '../type'
-
+import { v4 as uuidv4 } from 'uuid'
 export class projectDb {
-	private lastid: number = 0
 	private readonly project_File: string
 
 	constructor(filepath: string) {
 		this.project_File = path.join(filepath, 'projects.json')
 		// sure the data folder exists
-		fs.mkdirSync(filepath, { recursive: true })
 		console.log('file path from db', this.project_File)
 		if (!fs.existsSync(this.project_File)) {
+			fs.mkdirSync(filepath, { recursive: true })
 			fs.writeFileSync(this.project_File, '[]')
 		}
 		this.initializedLastId()
@@ -20,16 +19,6 @@ export class projectDb {
 
 	private initializedLastId(): void {
 		const projects = this.readProjects()
-		this.lastid =
-			projects?.reduce((maxId, project) => {
-				const currentId = parseInt(project.id, 10)
-				return currentId > maxId ? currentId : maxId
-			}, 0) || 0
-	}
-
-	public getNextId(): string {
-		this.lastid++
-		return this.lastid.toString()
 	}
 
 	readProjects(): Tproject[] {
@@ -41,6 +30,7 @@ export class projectDb {
 			return []
 		}
 	}
+
 	writeProject(projects: Tproject[]): void {
 		try {
 			fs.writeFileSync(this.project_File, JSON.stringify(projects, null, 2))
