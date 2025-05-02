@@ -15,19 +15,20 @@ function registerProject(projectName: string, path: string) {
 
 	console.log(RegisterRepofiles ? 'success' : 'failed')
 }
-registerProject(
-	'pythonScript_writer',
-	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer'
-)
+
+// registerProject(
+// 	'pythonScript_writer',
+// 	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer'
+// )
 
 // read all project from db
 
 const readprojects = tracker.readprojects()
 
-registerProject(
-	'Advanced_nodejs',
-	'C:/Users/Administrator/Desktop/advanced nodejs/section-4'
-)
+// registerProject(
+// 	'Advanced_nodejs',
+// 	'C:/Users/Administrator/Desktop/advanced nodejs/section-4'
+// )
 
 // read all project from db
 
@@ -62,14 +63,14 @@ function DeleteGithistory(projectname: string) {
 fetchGitData()
 
 //startPolling
-// PollingManager.start(
-// 	'C:/Users/Administrator/Desktop/Golden-Team/childProcess',
-// 	100000
-// )
 PollingManager.start(
-	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer',
-	1000
+	'C:/Users/Administrator/Desktop/complete-node-bootcamp-master/4-natours/starter',
+	100000
 )
+// PollingManager.start(
+// 	'C:/Users/Administrator/Desktop/Golden-Team/pythonScript_writer',
+// 	1000
+// )
 //stop polling one repo
 // PollingManager.stop('./childProcess')
 

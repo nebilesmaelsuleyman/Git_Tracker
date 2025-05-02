@@ -1,10 +1,8 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
-import { Command } from 'commander'
 
 const execAsync = promisify(exec)
-const program = new Command()
 
 export class GitServices {
 	private repoPath: string

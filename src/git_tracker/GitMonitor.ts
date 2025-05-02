@@ -77,6 +77,7 @@ export class GitRepositoryMonitor {
 			} catch (error) {
 				console.error('Error during snapshot capture', error)
 			}
+
 			setTimeout(poll, this.pollingIntervalMs)
 		}
 		poll()
